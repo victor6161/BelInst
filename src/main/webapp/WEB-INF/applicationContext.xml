@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd">
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+    <!--    <property name="maxUploadSize" value="200000"/>-->
+    </bean>
+
+    <bean id="userValidator" class="com.kozlov.validator.RegistrationValidator"/>
+
+
+
+    <bean id="friendDAO" class="com.kozlov.dao.FriendDAOImpl"/>
+    <bean id="userDAO" class="com.kozlov.dao.UserDAOImpl"/>
+    <bean id="pictureDAO" class="com.kozlov.dao.PictureDAOImpl"/>
+    <bean id="commentDAO" class="com.kozlov.dao.CommentDAO"/>
+
+    <bean id="commentDtoToEntity" class="com.kozlov.converter.CommentDtoToEntity">
+
+    </bean>
+    <bean id="userEntityToDTO" class="com.kozlov.converter.UserEntityToDTO"/>
+    <bean id="friendEntityToDTO" class="com.kozlov.converter.FriendEntityToDTO"/>
+    <bean id="pictureEntityToDTO" class="com.kozlov.converter.PictureEntityToDTO">
+        <property name="commentEntityToDTO" ref="commentEntityToDTO"/>
+    </bean>
+    <bean id="commentEntityToDTO" class="com.kozlov.converter.CommentEntityToDTO"/>
+    <bean id="userDtoToEntity" class="com.kozlov.converter.UserDtoToEntity"/>
+
+    <bean id="friendService" class="com.kozlov.service.FriendService">
+        <property name="friendDAO" ref="friendDAO"/>
+        <property name="friendEntityToDTO" ref="friendEntityToDTO"/>
+    </bean>
+
+    <bean id="pictureService" class="com.kozlov.service.PictureService">
+        <property name="friendDAO" ref="friendDAO"/>
+        <property name="pictureDAO" ref="pictureDAO"/>
+        <property name="pictureEntityToDTO" ref="pictureEntityToDTO"/>
+    </bean>
+
+    <bean id="userService" class="com.kozlov.service.UserService">
+        <property name="userDAO" ref="userDAO"/>
+        <property name="friendDAO" ref="friendDAO"/>
+        <property name="userEntityToDTO" ref="userEntityToDTO"/>
+        <property name="userDtoToEntity" ref="userDtoToEntity"/>
+    </bean>
+
+    <bean id="addPhotoService" class="com.kozlov.service.AddPhotoService">
+        <property name="pictureDAO" ref="pictureDAO"/>
+    </bean>
+    <bean id="commentService" class="com.kozlov.service.CommentService">
+        <property name="commentDAO" ref="commentDAO"/>
+        <property name="commentDtoToEntity" ref="commentDtoToEntity"/>
+        <property name="pictureService" ref="pictureService"/>
+        <property name="commentEntityToDTO" ref="commentEntityToDTO"/>
+        <property name="pictureDAO" ref="pictureDAO"/>
+    </bean>
+
+    <mvc:annotation-driven/>
+
+    <bean id="messageSource"
+          class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+        <property name="basenames" value="/WEB-INF/locales/messages,/WEB-INF/locales/messages_ex"/>
+        <property name="defaultEncoding" value="UTF-8"/>
+    </bean>
+
+    <bean id="bcrypt" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
+    <bean id="formatter" class="java.util.Formatter"/>
+
+    <bean id="customAuthenticationProvider" class="com.kozlov.service.CustomAuthenticationProvider"/>
+    <context:component-scan base-package="com.kozlov.security"/>
+   <!-- <context:component-scan base-package="com.kozlov.service"/>-->
+
+
+   </beans>

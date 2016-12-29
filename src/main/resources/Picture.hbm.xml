@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+
+    <class name="com.kozlov.entity.PictureEntity" table="picture" schema="mydb">
+        <id name="id" column="id"/>
+        <property name="reference" column="reference"/>
+        <property name="username" column="username"/>
+        <property name="description" column="description"/>
+        <property name="date" column="date"/>
+        <set name="commentEntities" table="comment" inverse="true" order-by="lower(date) asc">
+            <key>
+                <column name="id_picture"/>
+            </key>
+            <one-to-many class="com.kozlov.entity.CommentEntity"/>
+        </set>
+    </class>
+</hibernate-mapping>
